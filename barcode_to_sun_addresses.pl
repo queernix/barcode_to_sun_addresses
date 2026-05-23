@@ -105,7 +105,7 @@ $hostid = $machine_type + $serial;
 
 # Be able to print the MAC address:
 # First, add the standard old Sun OUI:
-$mac_address[0] = 80;
+$mac_address[0] = 8;
 $mac_address[1] = 0;
 $mac_address[2] = 20;
 
