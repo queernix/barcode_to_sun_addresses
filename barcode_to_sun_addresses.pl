@@ -14,6 +14,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use warnings qw(all);
+use strict;
 
 use Getopt::Long;
 use Pod::Usage;
@@ -105,15 +106,14 @@ $hostid = $machine_type + $serial;
 
 # Be able to print the MAC address:
 # First, add the standard old Sun OUI:
-$mac_address[0] = 8;
-$mac_address[1] = 0;
-$mac_address[2] = 20;
+
+my @mac_address = ( 8, 0, 20 );
 
 # Next, parse out the host portion; we use substr() in reverse
 # as negative serials cause a problem if we don't
-$mac_address[3] = substr(sprintf("%06X", $mac), -6, 2);
-$mac_address[4] = substr(sprintf("%06X", $mac), -4, 2);
-$mac_address[5] = substr(sprintf("%06X", $mac), -2);
+push @mac_address, (substr(sprintf("%06X", $mac), -6, 2));
+push @mac_address, (substr(sprintf("%06X", $mac), -4, 2));
+push @mac_address, (substr(sprintf("%06X", $mac), -2));
 my $mac_string = join(":",@mac_address);
 
 # Print our variables
