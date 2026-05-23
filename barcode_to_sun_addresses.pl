@@ -69,13 +69,21 @@ e.g. if you were going to run this for a SPARCstation 1 with a barcode of 'JET2'
 
 =cut
 
+# declare variables for options
+my $help = 0;
+my $machine_type;
+my $barcode;
+
 # Deal with the command line arguments
 GetOptions(
-    'help'          => \my $help,
-    'machine_type=s'    => \my $machine_type,
-    'barcode=s'    => \my $barcode
-) or pod2usage(q(-verbose) => 1);
-pod2usage(q(-verbose) => 2) if $help;
+    'help|h!'         => \$help,
+    'machine_type|m=s' => \$machine_type,
+    'barcode|b=s'      => \$barcode
+) or pod2usage(-verbose => 1, -exitval => 1, -output => \*STDERR);
+
+pod2usage(-verbose => 2) if $help;
+
+pod2usage(-verbose => 1, -exitval => 1, -output => \*STDERR) unless ($machine_type && $barcode);
 
 # Some more variables we should declare
 my $hostid;
