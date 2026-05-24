@@ -93,40 +93,40 @@ to the NVRAM/TOD clock chip on the motherboard.
 =cut
 
 my %sun_machine_types = (
-	01 => "2/1x0",
-	02 => "2/50",
-	11 => "3/160",
-	12 => "3/50",
-	13 => "3/2x0",
-	14 => "3/110",
-	17 => "3/60",
-	18 => "3/e",
-	21 => "4/2x0",
-	22 => "4/1x0",
-	23 => "4/3x0",
-	24 => "4/4x0",
-	31 => "386i/150 or 386i/250",
-	41 => "3/4x0",
-	42 => "3/80",
-	51 => "SPARCstation 1   (4/60)",
-	52 => "SPARCstation IPC (4/40)",
-	53 => "SPARCstation 1+  (4/65)",
-	54 => "SPARCstation SLC (4/20)",
-	55 => "SPARCstation 2   (4/75)",
-	56 => "SPARCstation ELC (4/25)",
-	57 => "SPARCstation IPX (4/50)",
-	61 => "4/e",
-	71 => "4/6x0   (670)",
-	72 => "SPARCstation 10,20",
-	80 => "SPARCclassic, LX, SPARC 5, SPARC 4, SS1000, Voyager, and Ultras",
-	83 => "Later workstations"
+	"2/1x0" => 01,
+	"2/50" => 02,
+	"3/160" => 11,
+	"3/50" => 12,
+	"3/2x0" => 13,
+	"3/110" => 14,
+	"3/60" => 17,
+	"3/e" => 18,
+	"4/2x0" => 21,
+	"4/1x0" => 22,
+	"4/3x0" => 23,
+	"4/4x0" => 24,
+	"386i/150 or 386i/250" => 31,
+	"3/4x0" => 41,
+	"3/80" => 42,
+	"SPARCstation 1   (4/60)" => 51,
+	"SPARCstation IPC (4/40)" => 52,
+	"SPARCstation 1+  (4/65)" => 53,
+	"SPARCstation SLC (4/20)" => 54,
+	"SPARCstation 2   (4/75)" => 55,
+	"SPARCstation ELC (4/25)" => 56,
+	"SPARCstation IPX (4/50)" => 57,
+	"4/e" => 61,
+	"4/6x0   (670)" => 71,
+	"SPARCstation 10,20" => 72,
+	"SPARCclassic, LX, SPARC 5, SPARC 4, SS1000, Voyager, and Ultras" => 80,
+	"Later workstations" => 83
 );
 
 sub parse_sun_barcode {
 	use POSIX qw( strtol );
 	my %p = @_;
 
-	unless (defined $p{machine_type} && grep(/$p{machine_type}/, keys %sun_machine_types)) {
+	unless (defined $p{machine_type} && grep(/$p{machine_type}/, values %sun_machine_types)) {
 		croak "Error: Invalid Machine Type " . $p{machine_type};
 	}
 	unless (defined $p{barcode} && length $p{barcode} == 4) {
