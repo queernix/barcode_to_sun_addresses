@@ -15,10 +15,14 @@
 
 use warnings qw(all);
 use strict;
+use 5.005;
 
 use Getopt::Long;
 use Pod::Usage;
-use POSIX;
+
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use Ewaste::Sun::Barcode;
 
 =pod 
 
@@ -85,48 +89,14 @@ pod2usage(-verbose => 2) if $help;
 
 pod2usage(-verbose => 1, -exitval => 1, -output => \*STDERR) unless ($machine_type && $barcode);
 
-# Some more variables we should declare
-my $hostid;
-my $mac;
-my $serial;
-my $barcode_numeric;
-
-# Convert the barcode to its numeric equivalent
-$barcode_numeric = strtol($barcode, 36);
-
-# Create a serial #
-$serial = $barcode_numeric - 0xAA8C0;
-
-# Create a MAC address
-$mac = $barcode_numeric - 0x82DC0;
-# Or we can add 0x27b00 to the serial to get the mac? (from: http://mail-index.netbsd.org/port-sparc/2001/09/04/0003.html)
-# Or on the ELC, the offset might be 0x77b00 (from: http://mail-index.netbsd.org/port-sparc/2001/09/04/0002.html)
-# So, maybe there are different offsets for different machines?
-#$mac = $serial + 0x27b00;
-#$mac = $serial + 0x77b00;
-
-# Create a hostid
-# First, create a fake hex value to add to the serial:
-$machine_type = "0x" . $machine_type . "000000";
-# Now, convert it to a format we can add to the serial #: 
-$machine_type = oct($machine_type) if $machine_type =~ /^0/;
-$hostid = $machine_type + $serial;
-
-# Be able to print the MAC address:
-# First, add the standard old Sun OUI:
-
-my @mac_address = ( 8, 0, 20 );
-
-# Next, parse out the host portion; we use substr() in reverse
-# as negative serials cause a problem if we don't
-push @mac_address, (substr(sprintf("%06X", $mac), -6, 2));
-push @mac_address, (substr(sprintf("%06X", $mac), -4, 2));
-push @mac_address, (substr(sprintf("%06X", $mac), -2));
-my $mac_string = join(":",@mac_address);
+my %idprom_data = parse_sun_barcode (
+	machine_type => $machine_type,
+	barcode      => $barcode
+) or die "failed to parse barcode...";
 
 # Print our variables
 print "IDPROM Barcode was: $barcode\n";
-print "Serial # in hex is: " . sprintf("%X", $serial) . "\n";
-print "Serial # in decimal is: $serial\n";
-print "Ethernet MAC address is: $mac_string\n";
-print "Host ID is: " . sprintf("%X", $hostid) . "\n";
+print "Serial # in hex is: " . sprintf("%X", $idprom_data{serial_number}) . "\n";
+print "Serial # in decimal is: $idprom_data{serial_number}\n";
+print "Ethernet MAC address is: $idprom_data{mac_address}\n";
+print "Host ID is: " . sprintf("%X", $idprom_data{hostid}) . "\n";
